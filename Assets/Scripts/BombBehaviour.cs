@@ -4,6 +4,7 @@ public class BombBehaviour : MonoBehaviour {
 
     private bool isRed;
     private int blinkCountdown;
+
     public float bombCountdownInSeconds;
 
 	// Use this for initialization
@@ -11,7 +12,6 @@ public class BombBehaviour : MonoBehaviour {
 
         isRed = true;
         blinkCountdown = 5;
-
 	}
 	
 	// Update is called once per frame
@@ -25,13 +25,17 @@ public class BombBehaviour : MonoBehaviour {
             blinkCountdown = 5;
         }
 
-        // Exposion
+        // Explosion
         bombCountdownInSeconds -= 1F / 60F; // Remove 1 60th of a second
         if (bombCountdownInSeconds <= 0)
         {
-            
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
 
 	}
+
+    private void OnTriggerExit(Collider other)
+    {
+        GetComponent<SphereCollider>().isTrigger = false;
+    }
 }

@@ -28,8 +28,10 @@ public class MapGenerator : MonoBehaviour {
 
         rock.transform.localScale = new Vector3(squareSize, squareSize, squareSize);
         rock.transform.position = new Vector3(0, squareSize / 2, 0);
+
         unbreakableRock.transform.localScale = new Vector3(squareSize, squareSize, squareSize);
         unbreakableRock.transform.position = new Vector3(0, squareSize / 2, 0);
+
         player.transform.localScale = new Vector3(squareSize*0.7F, squareSize * 0.7F, squareSize * 0.7F);
         player.transform.position = new Vector3(0, squareSize*0.7F / 2, 0);
 
@@ -39,12 +41,15 @@ public class MapGenerator : MonoBehaviour {
         nbSquareWidth = Convert.ToInt32(mapWidth / squareSize);
         nbSquareHeight = Convert.ToInt32(mapHeight / squareSize);
 
-        // Init map to default state
+        // Generate map
         InitializeMap();
-
+        // Create it in game
         GenerateMapGameObjects();
 	}
 
+    /// <summary>
+    /// Construct the logical map
+    /// </summary>
     void InitializeMap()
     {
         map = new Dictionary<Point, CaseType>();
@@ -52,22 +57,27 @@ public class MapGenerator : MonoBehaviour {
         {
             for(int x=0; x<nbSquareWidth; x++)
             {
-                map[new Point { x = x, y = y }] = CaseType.Empty;
+                map[new Point { x = x, y = y }] = (x%2==1&&y%2==1)?CaseType.UnbreakableRock:CaseType.Empty;
             }
         }
 
         // Spawn the players (one on each side of the map symmetrically) [ p1 | p2 ]
         Point firstPlayer = GetRandomEmptySpace();
         map[firstPlayer] = CaseType.StartingPlayer;
+        // Ensure the case around the player (verticaly and horizontaly are empty)
+        ForceEmptyAround(firstPlayer);
 
 
         // Generate rocks randomly on the map
         for (int i = 0; i < nbRocks; i++)
         {
-            map[GetRandomEmptySpace()] = CaseType.UnbreakableRock;
+            map[GetRandomEmptySpace()] = CaseType.Rock;
         }
     }
 
+    /// <summary>
+    /// Create the map in game objects
+    /// </summary>
     void GenerateMapGameObjects()
     {
         foreach(var square in map)
@@ -89,14 +99,19 @@ public class MapGenerator : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Init map square type
+    /// </summary>
     enum CaseType
     {
         Empty,
         UnbreakableRock,
         Rock,
-        StartingPlayer
+        StartingPlayer,
+        StayEmpty // Case that should stay empty on generation
     }
 
+    // Simple point struct for coord managment
     struct Point
     {
         public int x, y;
@@ -109,7 +124,14 @@ public class MapGenerator : MonoBehaviour {
 
     }
 
-
+    /// <summary>
+    /// Returns the absolute position from a grid coordinate
+    /// Z is the absolute height you want to set for the object (should be his scale / 2)
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="z"></param>
+    /// <returns></returns>
     private Vector3 GetPositionFromGridCoord(int x, int y, float z)
     {
         var position = new Vector3((-1 * mapWidth/2)+squareOffset, z, (-1*mapHeight/2)+squareOffset);
@@ -120,15 +142,43 @@ public class MapGenerator : MonoBehaviour {
         return position;
     }
 
+    /// <summary>
+    /// Instantiate a given object to a given grid position
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="pt"></param>
     private void MoveAndInstantiate(GameObject obj, Point pt)
     {
         obj.transform.position = GetPositionFromGridCoord(pt.x, pt.y, obj.transform.position.y);
         Instantiate(obj);
     }
     
+    /// <summary>
+    /// Returns an empty square position if available
+    /// </summary>
+    /// <returns></returns>
     private Point GetRandomEmptySpace()
     {
         var emptySpaces = map.Where(p => p.Value == CaseType.Empty).ToList();
-        return emptySpaces[UnityEngine.Random.Range(0, emptySpaces.Count())].Key;
+        if(emptySpaces.Count > 0)
+            return emptySpaces[UnityEngine.Random.Range(0, emptySpaces.Count())].Key;
+        return new Point() { x=-100, y=-100 };
+    }
+
+    /// <summary>
+    /// Ensures the squares around the given position are empty
+    /// </summary>
+    /// <param name="pt"></param>
+    private void ForceEmptyAround(Point pt)
+    {
+        // Check up
+        if (pt.y > 0)
+            map[new Point() { x = pt.x, y = pt.y - 1 }] = CaseType.StayEmpty;
+        if (pt.x > 0)
+            map[new Point() { x = pt.x - 1, y = pt.y }] = CaseType.StayEmpty;
+        if (pt.y < nbSquareHeight)
+            map[new Point() { x = pt.x, y = pt.y + 1 }] = CaseType.StayEmpty;
+        if (pt.x < nbSquareWidth)
+            map[new Point() { x = pt.x + 1, y = pt.y }] = CaseType.StayEmpty;
     }
 }
