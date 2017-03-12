@@ -31,7 +31,7 @@ public class MapGenerator : MonoBehaviour {
         unbreakableRock.transform.localScale = new Vector3(squareSize, squareSize, squareSize);
         unbreakableRock.transform.position = new Vector3(0, squareSize / 2, 0);
         player.transform.localScale = new Vector3(squareSize*0.7F, squareSize * 0.7F, squareSize * 0.7F);
-        player.transform.position = new Vector3(0, squareSize / 2, 0);
+        player.transform.position = new Vector3(0, squareSize*0.7F / 2, 0);
 
         mapWidth = this.transform.localScale.x * 10;
         mapHeight = this.transform.localScale.z * 10;
