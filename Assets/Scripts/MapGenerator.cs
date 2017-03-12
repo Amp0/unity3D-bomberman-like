@@ -24,7 +24,14 @@ public class MapGenerator : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        squareOffset = 1;
+        squareOffset = squareSize/4;
+
+        rock.transform.localScale = new Vector3(squareSize, squareSize, squareSize);
+        rock.transform.position = new Vector3(0, squareSize / 2, 0);
+        unbreakableRock.transform.localScale = new Vector3(squareSize, squareSize, squareSize);
+        unbreakableRock.transform.position = new Vector3(0, squareSize / 2, 0);
+        player.transform.localScale = new Vector3(squareSize*0.7F, squareSize * 0.7F, squareSize * 0.7F);
+        player.transform.position = new Vector3(0, squareSize / 2, 0);
 
         mapWidth = this.transform.localScale.x * 10;
         mapHeight = this.transform.localScale.z * 10;
@@ -49,12 +56,15 @@ public class MapGenerator : MonoBehaviour {
             }
         }
 
+        // Spawn the players (one on each side of the map symmetrically) [ p1 | p2 ]
+        Point firstPlayer = GetRandomEmptySpace();
+        map[firstPlayer] = CaseType.StartingPlayer;
+
+
         // Generate rocks randomly on the map
         for (int i = 0; i < nbRocks; i++)
         {
-            var emptySpaces = map.Where(p => p.Value == CaseType.Empty).ToList();
-            Point x = emptySpaces[UnityEngine.Random.Range(0, emptySpaces.Count())].Key;
-            map[x] = CaseType.UnbreakableRock;
+            map[GetRandomEmptySpace()] = CaseType.UnbreakableRock;
         }
     }
 
@@ -100,9 +110,9 @@ public class MapGenerator : MonoBehaviour {
     }
 
 
-    private Vector3 GetPositionFromGridCoord(int x, int y)
+    private Vector3 GetPositionFromGridCoord(int x, int y, float z)
     {
-        var position = new Vector3((-1 * mapWidth/2)+squareOffset, 0.5F, (-1*mapHeight/2)+squareOffset);
+        var position = new Vector3((-1 * mapWidth/2)+squareOffset, z, (-1*mapHeight/2)+squareOffset);
 
         position.x += x * squareSize + squareOffset;
         position.z += y * squareSize + squareOffset;
@@ -112,7 +122,13 @@ public class MapGenerator : MonoBehaviour {
 
     private void MoveAndInstantiate(GameObject obj, Point pt)
     {
-        obj.transform.position = GetPositionFromGridCoord(pt.x, pt.y);
+        obj.transform.position = GetPositionFromGridCoord(pt.x, pt.y, obj.transform.position.y);
         Instantiate(obj);
-    } 
+    }
+    
+    private Point GetRandomEmptySpace()
+    {
+        var emptySpaces = map.Where(p => p.Value == CaseType.Empty).ToList();
+        return emptySpaces[UnityEngine.Random.Range(0, emptySpaces.Count())].Key;
+    }
 }
