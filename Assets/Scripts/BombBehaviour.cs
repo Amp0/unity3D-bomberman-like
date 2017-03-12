@@ -7,6 +7,8 @@ public class BombBehaviour : MonoBehaviour {
 
     public float bombCountdownInSeconds;
 
+    public GameObject explosiveRay;
+
 	// Use this for initialization
 	void Start () {
 
@@ -30,6 +32,12 @@ public class BombBehaviour : MonoBehaviour {
         if (bombCountdownInSeconds <= 0)
         {
             gameObject.SetActive(false);
+            explosiveRay.transform.position = gameObject.transform.position;
+            for(int i=0; i<4; i++)
+            {
+                explosiveRay.transform.Rotate(new Vector3(0, 90, 0));
+                Instantiate(explosiveRay);
+            }
         }
 
 	}
