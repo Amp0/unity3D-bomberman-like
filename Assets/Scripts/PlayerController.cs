@@ -31,7 +31,8 @@ public class PlayerController : MonoBehaviour {
 		if (canBomb && bombCount < bombCountLimit && Input.GetButtonDown("Jump"+playerId))
 		{
 			basicBomb.transform.position = gameObject.transform.position;
-			bombs.Add(Instantiate(basicBomb));
+			var bomb = Instantiate(basicBomb);
+            bomb.GetComponent<BombBehaviour>().playerColor = GetComponent<Renderer>().material.color;
 			bombCount++;
 		}
 	}

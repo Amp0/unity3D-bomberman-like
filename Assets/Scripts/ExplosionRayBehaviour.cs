@@ -11,6 +11,7 @@ public class ExplosionRayBehaviour : MonoBehaviour
     private List<string> blockers;
 
     public int squareSize;
+    public Color explosionColor;
 
     // Use this for initialization
     void Start()
@@ -20,6 +21,7 @@ public class ExplosionRayBehaviour : MonoBehaviour
         Vector3 scale = gameObject.transform.localScale;
         scale.x = squareSize * 0.7F;
         gameObject.transform.localScale = scale;
+        GetComponent<Renderer>().material.color = explosionColor;
 
         blockers = new List<string>();
         blockers.Add("Wall");

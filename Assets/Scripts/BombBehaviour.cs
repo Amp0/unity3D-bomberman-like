@@ -2,16 +2,17 @@
 
 public class BombBehaviour : MonoBehaviour {
 
-    private bool isRed;
+    private bool isWhite;
     private int blinkCountdown;
 
     public float bombCountdownInSeconds;
 
     public GameObject explosiveRay;
+    public Color playerColor;
 
 	// Use this for initialization
 	void Start () {
-        isRed = true;
+        isWhite = false;
         blinkCountdown = 5;
 	}
 	
@@ -21,8 +22,8 @@ public class BombBehaviour : MonoBehaviour {
         blinkCountdown--;
         if(blinkCountdown <= 0)
         {
-            GetComponent<Renderer>().material.color = (isRed) ? Color.red : Color.white;
-            isRed = !isRed;
+            GetComponent<Renderer>().material.color = (!isWhite) ? playerColor : Color.white;
+            isWhite = !isWhite;
             blinkCountdown = 5;
         }
 
@@ -57,7 +58,9 @@ public class BombBehaviour : MonoBehaviour {
         for (int i = 0; i < 4; i++)
         {
             explosiveRay.transform.Rotate(new Vector3(0, 90, 0));
-            Instantiate(explosiveRay);
+            var explo = Instantiate(explosiveRay);
+            explo.GetComponent<ExplosionRayBehaviour>().explosionColor = playerColor;
+
         }
     }
 }
