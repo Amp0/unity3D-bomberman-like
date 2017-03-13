@@ -66,13 +66,57 @@ public class MapGenerator : MonoBehaviour {
     void InitializeMap()
     {
         map = new Dictionary<Point, CaseType>();
-        for(int y=0; y<nbSquareHeight; y++)
+        
+        if (nbSquareWidth % 2 == 1)
         {
-            for(int x=0; x<nbSquareWidth; x++)
+            for (int y = 0; y < nbSquareHeight; y++)
             {
-                map[new Point { x = x, y = y }] = (x % 2 == 1 && y % 2 == 1) ? CaseType.UnbreakableRock : CaseType.Empty;
-                //map[new Point { x = x, y = y }] = CaseType.Rock;
+
+                for (int x = 0; x < nbSquareWidth; x++)
+                {
+                    map[new Point { x = x, y = y }] = (x % 2 == 1 && y % 2 == 1) ? CaseType.UnbreakableRock : CaseType.Empty;
+                    //map[new Point { x = x, y = y }] = CaseType.Rock;
+                }
+
             }
+        }
+        // Fixed 10x10 map (Should be generated)
+        else if(nbSquareHeight == 10 && nbSquareHeight == nbSquareWidth)
+        {
+            for (int y = 0; y < nbSquareHeight; y++)
+            {
+                for (int x = 0; x < nbSquareWidth; x++)
+                {
+                    map[new Point { x = x, y = y }] = CaseType.Empty;
+                }
+            }
+
+            // Generate fixed center
+            map[new Point { x = nbSquareWidth / 2, y = nbSquareHeight / 2 }] = CaseType.UnbreakableRock;
+            map[new Point { x = nbSquareWidth / 2 -1, y = nbSquareHeight / 2 -1 }] = CaseType.UnbreakableRock;
+            map[new Point { x = nbSquareWidth / 2 -1, y = nbSquareHeight / 2 }] = CaseType.UnbreakableRock;
+            map[new Point { x = nbSquareWidth / 2, y = nbSquareHeight / 2 -1}] = CaseType.UnbreakableRock;
+
+            // Add blocks
+            map[new Point { x = 1, y = 1 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 1, y = 2 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 2, y = 1 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 2, y = 2 }] = CaseType.UnbreakableRock;
+
+            map[new Point { x = 7, y = 1 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 7, y = 2 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 8, y = 1 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 8, y = 2 }] = CaseType.UnbreakableRock;
+
+            map[new Point { x = 7, y = 7 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 7, y = 8 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 8, y = 7 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 8, y = 8 }] = CaseType.UnbreakableRock;
+
+            map[new Point { x = 1, y = 7 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 1, y = 8 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 2, y = 7 }] = CaseType.UnbreakableRock;
+            map[new Point { x = 2, y = 8 }] = CaseType.UnbreakableRock;
         }
 
         // Spawn the players (one on each side of the map symmetrically) [ p1 | p2 ]

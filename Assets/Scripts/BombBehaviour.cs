@@ -30,15 +30,7 @@ public class BombBehaviour : MonoBehaviour {
         bombCountdownInSeconds -= 1F / 60F; // Remove 1 60th of a second
         if (bombCountdownInSeconds <= 0)
         {
-            gameObject.SetActive(false);
-            Vector3 bombPos = gameObject.transform.position;
-            bombPos.y = 0F;
-            explosiveRay.transform.position = bombPos;
-            for(int i=0; i<4; i++)
-            {
-                explosiveRay.transform.Rotate(new Vector3(0, 90, 0));
-                Instantiate(explosiveRay);
-            }
+            Explode();
         }
 
 	}
@@ -46,5 +38,26 @@ public class BombBehaviour : MonoBehaviour {
     private void OnTriggerExit(Collider other)
     {
         GetComponent<SphereCollider>().isTrigger = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag.Equals("Damage"))
+        {
+            Explode();
+        }
+    }
+
+    private void Explode()
+    {
+        gameObject.SetActive(false);
+        Vector3 bombPos = gameObject.transform.position;
+        bombPos.y = 0F;
+        explosiveRay.transform.position = bombPos;
+        for (int i = 0; i < 4; i++)
+        {
+            explosiveRay.transform.Rotate(new Vector3(0, 90, 0));
+            Instantiate(explosiveRay);
+        }
     }
 }

@@ -15,7 +15,11 @@ public class ExplosionRayBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        maxRange = 6*2;
+        maxRange = 2;
+
+        Vector3 scale = gameObject.transform.localScale;
+        scale.x = squareSize * 0.7F;
+        gameObject.transform.localScale = scale;
 
         blockers = new List<string>();
         blockers.Add("Wall");
@@ -28,7 +32,7 @@ public class ExplosionRayBehaviour : MonoBehaviour
     {
         if (maxRange > 0)
         {
-            gameObject.transform.Translate(new Vector3(0, 0, -gameObject.transform.localScale.x/2));
+            gameObject.transform.Translate(new Vector3(0, 0, -gameObject.transform.position.x/10));
             var scale = gameObject.transform.localScale;
             scale.z += gameObject.transform.localScale.x;
             gameObject.transform.localScale = scale;
