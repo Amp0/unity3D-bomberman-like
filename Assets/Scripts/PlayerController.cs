@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour {
 		// Update bomb count
 		bombCount = bombs.Count(e => e.activeSelf);
 
-		if (canBomb && bombCount < bombCountLimit && Input.GetAxis("Jump"+playerId) > 0)
+		if (canBomb && bombCount < bombCountLimit && Input.GetButtonDown("Jump"+playerId))
 		{
 			basicBomb.transform.position = gameObject.transform.position;
 			bombs.Add(Instantiate(basicBomb));
