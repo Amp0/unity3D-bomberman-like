@@ -1,13 +1,26 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class ExplosionRayBehaviour : MonoBehaviour
 {
     private float maxRange;
 
+    /// <summary>
+    /// List of blocking tags
+    /// </summary>
+    private List<string> blockers;
+
+    public int squareSize;
+
     // Use this for initialization
     void Start()
     {
-        maxRange = 5;
+        maxRange = 6*2;
+
+        blockers = new List<string>();
+        blockers.Add("Wall");
+        blockers.Add("Destroyable Rock");
+        blockers.Add("Unbreakable");
     }
 
     // Update is called once per frame
@@ -15,7 +28,10 @@ public class ExplosionRayBehaviour : MonoBehaviour
     {
         if (maxRange > 0)
         {
-            gameObject.transform.Translate(new Vector3(0, 0, 3));
+            gameObject.transform.Translate(new Vector3(0, 0, -gameObject.transform.localScale.x/2));
+            var scale = gameObject.transform.localScale;
+            scale.z += gameObject.transform.localScale.x;
+            gameObject.transform.localScale = scale;
             maxRange--;
         }
         else
@@ -26,14 +42,8 @@ public class ExplosionRayBehaviour : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag.Equals("Destroyable Rock"))
-        {
-            other.gameObject.SetActive(false);
+        print(other+"::"+other.tag);
+        if (blockers.Contains(other.tag))
             gameObject.SetActive(false);
-        }
-        else if(other.tag.Equals("Unbreakable"))
-        {
-            gameObject.SetActive(false);
-        }
     }
 }

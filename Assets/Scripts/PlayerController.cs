@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour {
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.name.Equals("Bomb"))
+		if (other.tag.Equals("Bomb"))
 		{
 			canBomb = false;
 			bombCount++;
@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour {
 
 	private void OnTriggerExit(Collider other)
 	{
-		if (other.name.Equals("Bomb"))
+		if (other.tag.Equals("Bomb"))
 		{
 			bombCount--;
 			canBomb = true;

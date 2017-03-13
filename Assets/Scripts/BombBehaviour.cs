@@ -11,7 +11,6 @@ public class BombBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
         isRed = true;
         blinkCountdown = 5;
 	}
@@ -32,7 +31,9 @@ public class BombBehaviour : MonoBehaviour {
         if (bombCountdownInSeconds <= 0)
         {
             gameObject.SetActive(false);
-            explosiveRay.transform.position = gameObject.transform.position;
+            Vector3 bombPos = gameObject.transform.position;
+            bombPos.y = 0F;
+            explosiveRay.transform.position = bombPos;
             for(int i=0; i<4; i++)
             {
                 explosiveRay.transform.Rotate(new Vector3(0, 90, 0));
