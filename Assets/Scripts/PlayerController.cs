@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour {
 	public float speed;
 
 	public GameObject basicBomb;
+    public int playerId;
 
 	public bool canBomb;
 	private int bombCountLimit;
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour {
 		// Update bomb count
 		bombCount = bombs.Count(e => e.activeSelf);
 
-		if (canBomb && bombCount < bombCountLimit && Input.GetKeyDown("space"))
+		if (canBomb && bombCount < bombCountLimit && Input.GetAxis("Jump"+playerId) > 0)
 		{
 			basicBomb.transform.position = gameObject.transform.position;
 			bombs.Add(Instantiate(basicBomb));
@@ -37,8 +38,8 @@ public class PlayerController : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-		var x = Input.GetAxis("Horizontal") * speed;
-		var y = Input.GetAxis("Vertical") * speed;
+		var x = Input.GetAxis("Horizontal"+playerId) * speed;
+		var y = Input.GetAxis("Vertical"+playerId) * speed;
 
 		transform.Translate(x, 0, y);
 	}

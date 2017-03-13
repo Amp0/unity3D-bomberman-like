@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour {
 
+    private static List<Color> playerColors = new List<Color>()
+    {
+        Color.blue,
+        Color.red,
+        Color.green,
+        Color.yellow
+    };
+
     private float mapWidth;
     private float mapHeight;
 
@@ -14,6 +22,8 @@ public class MapGenerator : MonoBehaviour {
     private float squareOffset;
 
     private Dictionary<Point, CaseType> map;
+
+    private int countPlayer;
 
     public int squareSize;
     public int nbRocks;
@@ -41,6 +51,8 @@ public class MapGenerator : MonoBehaviour {
         nbSquareWidth = Convert.ToInt32(mapWidth / squareSize);
         nbSquareHeight = Convert.ToInt32(mapHeight / squareSize);
 
+        countPlayer = 0;
+
         // Generate map
         InitializeMap();
         // Create it in game
@@ -63,9 +75,19 @@ public class MapGenerator : MonoBehaviour {
 
         // Spawn the players (one on each side of the map symmetrically) [ p1 | p2 ]
         Point firstPlayer = GetRandomEmptySpace();
-        map[firstPlayer] = CaseType.StartingPlayer;
+        map[firstPlayer] = CaseType.Player;
+
+        Point secondPlayer = new Point()
+        {
+            x = (nbSquareWidth-1) - firstPlayer.x,
+            y = (nbSquareHeight-1) - firstPlayer.y
+        };
+        map[secondPlayer] = CaseType.Player;
         // Ensure the case around the player (verticaly and horizontaly are empty)
         ForceEmptyAround(firstPlayer);
+        ForceEmptyAround(secondPlayer);
+
+
 
 
         // Generate rocks randomly on the map
@@ -90,8 +112,11 @@ public class MapGenerator : MonoBehaviour {
                 case CaseType.Rock:
                     MoveAndInstantiate(rock, square.Key);
                     break;
-                case CaseType.StartingPlayer:
-                    MoveAndInstantiate(player, square.Key);
+                case CaseType.Player:
+                    countPlayer++;
+                    var playerCopy = MoveAndInstantiate(player, square.Key);
+                    playerCopy.GetComponent<PlayerController>().playerId = countPlayer;
+                    playerCopy.GetComponent<Renderer>().material.color = playerColors[countPlayer-1];
                     break;
                 case CaseType.Empty:
                     break;
@@ -107,7 +132,7 @@ public class MapGenerator : MonoBehaviour {
         Empty,
         UnbreakableRock,
         Rock,
-        StartingPlayer,
+        Player,
         StayEmpty // Case that should stay empty on generation
     }
 
@@ -147,10 +172,10 @@ public class MapGenerator : MonoBehaviour {
     /// </summary>
     /// <param name="obj"></param>
     /// <param name="pt"></param>
-    private void MoveAndInstantiate(GameObject obj, Point pt)
+    private GameObject MoveAndInstantiate(GameObject obj, Point pt)
     {
         obj.transform.position = GetPositionFromGridCoord(pt.x, pt.y, obj.transform.position.y);
-        Instantiate(obj);
+        return Instantiate(obj);
     }
     
     /// <summary>
