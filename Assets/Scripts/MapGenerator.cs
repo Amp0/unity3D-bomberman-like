@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -34,7 +35,7 @@ public class MapGenerator : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        squareOffset = squareSize/4;
+        squareOffset = squareSize/2;
 
         rock.transform.localScale = new Vector3(squareSize, squareSize, squareSize);
         rock.transform.position = new Vector3(0, squareSize / 2, 0);
@@ -69,7 +70,8 @@ public class MapGenerator : MonoBehaviour {
         {
             for(int x=0; x<nbSquareWidth; x++)
             {
-                map[new Point { x = x, y = y }] = (x%2==1&&y%2==1)?CaseType.UnbreakableRock:CaseType.Empty;
+                map[new Point { x = x, y = y }] = (x % 2 == 1 && y % 2 == 1) ? CaseType.UnbreakableRock : CaseType.Empty;
+                //map[new Point { x = x, y = y }] = CaseType.Rock;
             }
         }
 
@@ -79,8 +81,8 @@ public class MapGenerator : MonoBehaviour {
 
         Point secondPlayer = new Point()
         {
-            x = (nbSquareWidth-1) - firstPlayer.x,
-            y = (nbSquareHeight-1) - firstPlayer.y
+            x = (nbSquareWidth - 1) - firstPlayer.x,
+            y = (nbSquareHeight - 1) - firstPlayer.y
         };
         map[secondPlayer] = CaseType.Player;
         // Ensure the case around the player (verticaly and horizontaly are empty)
@@ -146,7 +148,11 @@ public class MapGenerator : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetButtonDown("Reset"))
+        {
+            Scene scene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(scene.name);
+        }
     }
 
     /// <summary>
@@ -161,8 +167,8 @@ public class MapGenerator : MonoBehaviour {
     {
         var position = new Vector3((-1 * mapWidth/2)+squareOffset, z, (-1*mapHeight/2)+squareOffset);
 
-        position.x += x * squareSize + squareOffset;
-        position.z += y * squareSize + squareOffset;
+        position.x += x * squareSize;
+        position.z += y * squareSize;
 
         return position;
     }
@@ -196,14 +202,15 @@ public class MapGenerator : MonoBehaviour {
     /// <param name="pt"></param>
     private void ForceEmptyAround(Point pt)
     {
+        int rd = UnityEngine.Random.Range(0, 3);
         // Check up
-        if (pt.y > 0)
+        if (pt.y > 0 && (rd == 0 || rd == 1 )) // up
             map[new Point() { x = pt.x, y = pt.y - 1 }] = CaseType.StayEmpty;
-        if (pt.x > 0)
+        if (pt.x > 0 && (rd == 0 || rd == 2 )) // left
             map[new Point() { x = pt.x - 1, y = pt.y }] = CaseType.StayEmpty;
-        if (pt.y < nbSquareHeight)
+        if (pt.y < nbSquareHeight && ( rd == 3 || rd == 2)) // down
             map[new Point() { x = pt.x, y = pt.y + 1 }] = CaseType.StayEmpty;
-        if (pt.x < nbSquareWidth)
+        if (pt.x < nbSquareWidth && (rd == 1 || rd == 3)) // right
             map[new Point() { x = pt.x + 1, y = pt.y }] = CaseType.StayEmpty;
     }
 }
