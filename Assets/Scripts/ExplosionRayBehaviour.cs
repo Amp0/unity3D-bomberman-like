@@ -42,7 +42,6 @@ public class ExplosionRayBehaviour : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print(other+"::"+other.tag);
         if (blockers.Contains(other.tag))
             gameObject.SetActive(false);
     }
