@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour {
 			basicBomb.transform.position = gameObject.transform.position;
 			var bomb = Instantiate(basicBomb);
             bomb.GetComponent<BombBehaviour>().playerColor = GetComponent<Renderer>().material.color;
+            bombs.Add(bomb);
 			bombCount++;
 		}
 	}
@@ -50,7 +51,6 @@ public class PlayerController : MonoBehaviour {
 		if (other.tag.Equals("Bomb"))
 		{
 			canBomb = false;
-			bombCount++;
 		}
         else if(other.tag.Equals("Damage"))
         {
@@ -62,7 +62,6 @@ public class PlayerController : MonoBehaviour {
 	{
 		if (other.tag.Equals("Bomb"))
 		{
-			bombCount--;
 			canBomb = true;
 		}
 	}
